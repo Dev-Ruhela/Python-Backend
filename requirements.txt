@@ -1,8 +1,7 @@
-Flask==2.2.2
-transformers>=4.30.0
-torch==1.13.1
-PyPDF2==1.26.0
-huggingface-hub==0.11.1
-gunicorn==20.1.0
 flask
-Werkzeug==2.2.3
+transformers>=4.30.0
+torch
+PyPDF2
+huggingface_hub
+gunicorn
+Werkzeug
