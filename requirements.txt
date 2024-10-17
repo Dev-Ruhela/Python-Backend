@@ -7,3 +7,4 @@ gunicorn
 Werkzeug
 accelerate>=0.26.0
 requests
+flask_cors
