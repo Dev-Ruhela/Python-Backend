@@ -5,3 +5,4 @@ PyPDF2
 huggingface_hub
 gunicorn
 Werkzeug
+accelerate>=0.26.0
