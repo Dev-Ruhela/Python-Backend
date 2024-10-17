@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Import CORS
 import requests
 import os
 import logging
@@ -9,6 +10,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+# Enable CORS for all routes
+CORS(app)
 
 # Hugging Face API token - Ensure this is set in your environment
 hf_token = os.getenv('ChatIIITA')
@@ -26,7 +30,7 @@ def call_hugging_face_api(input_text):
     
     response = requests.post(model_api_url, headers=headers, json=payload)
     if response.status_code == 200:
-        return response.json()  # Adjust according to your API response structure
+        return response.json()  # Return the response as is; adjust according to your API response structure
     else:
         logger.error(f"API call failed: {response.status_code} - {response.text}")
         return {"error": "Error calling Hugging Face API"}
@@ -38,7 +42,7 @@ def extract_text_from_pdf(pdf_path):
         with open(pdf_path, "rb") as file:
             reader = PyPDF2.PdfReader(file)
             for page in reader.pages:
-                text += page.extract_text()
+                text += page.extract_text() or ""  # Handle None case
         return text
     except Exception as e:
         logger.error(f"Failed to extract text from PDF: {e}")
@@ -78,8 +82,8 @@ def chat():
         
         # Call the Hugging Face API for chat
         response = call_hugging_face_api(input_with_context)
-        if 'answer' in response:
-            return jsonify({"answer": response['answer']})
+        if 'generated_text' in response:
+            return jsonify({"answer": response['generated_text']})
         else:
             return jsonify(response), 500
     except Exception as e:
