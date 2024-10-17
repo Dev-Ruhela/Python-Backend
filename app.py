@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, LlamaConfig
 import torch
 import PyPDF2
 import os
@@ -24,12 +24,14 @@ else:
 try:
     model_name = "meta-llama/Llama-3.1-8B"
     
-    # Pass the API token for accessing the gated model
+    # Load model configuration
+    config = LlamaConfig.from_pretrained(model_name)
+    
+    # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=hf_token)
-    model = AutoModelForCausalLM.from_pretrained(model_name, 
-                                                 use_auth_token=hf_token, 
-                                                 torch_dtype=torch.float16, 
-                                                 device_map="auto")
+    
+    # Load model
+    model = AutoModelForCausalLM.from_pretrained(model_name, config=config, use_auth_token=hf_token, torch_dtype=torch.float16, device_map="auto")
 except Exception as e:
     logger.error(f"Failed to initialize LLaMA model: {e}")
     raise
@@ -67,7 +69,7 @@ def generate_embeddings():
         logger.error(f"Error generating embeddings: {e}")
         return jsonify({"error": "Error generating embeddings"}), 500
 
-# Endpoint for chat functionality
+# RAG-based chat endpoint
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
@@ -76,8 +78,15 @@ def chat():
     try:
         device = "cuda" if torch.cuda.is_available() else "cpu"
         inputs = tokenizer(data['text'], return_tensors="pt").to(device)
-        output = model.generate(inputs['input_ids'], max_new_tokens=100)
-        response = tokenizer.decode(output[0], skip_special_tokens=True)
+
+        # Use the PDF text as context for the model
+        context = pdf_text
+        input_with_context = f"{context}\n\nUser: {data['text']}\nAI:"
+        
+        # Generate a response based on the PDF context
+        output = model.generate(tokenizer.encode(input_with_context, return_tensors="pt").to(device), max_new_tokens=100)
+        response = tokenizer.decode(output[0], skip_special_tokens=True).split("AI:")[-1].strip()  # Get the AI response only
+        
         return jsonify({"answer": response})
     except Exception as e:
         logger.error(f"Error processing chat request: {e}")
