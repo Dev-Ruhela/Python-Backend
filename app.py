@@ -12,7 +12,11 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # Enable CORS for all routes
-CORS(app)
+from flask_cors import CORS
+
+# Enable CORS with credentials and specify allowed origin
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5173"}})
+
 
 # Hugging Face API token - Ensure this is set in your environment
 hf_token = os.getenv('ChatIIITA')
