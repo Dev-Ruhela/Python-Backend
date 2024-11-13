@@ -1,4 +1,4 @@
-flask
+
 transformers>=4.30.0
 torch
 PyPDF2
@@ -8,3 +8,9 @@ Werkzeug
 accelerate>=0.26.0
 requests
 flask_cors
+groq
+fastapi
+uvicorn
+PyMuPDF
+pydantic
+groq
