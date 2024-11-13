@@ -1,23 +1,21 @@
-# Use the official Python image from the Docker Hub
+
+# Use an official Python runtime as a parent image
 FROM python:3.10
 
-# Set the working directory inside the container
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements.txt file into the container
+# Copy the requirements file into the container
 COPY requirements.txt .
 
-# Install the necessary packages
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Gunicorn
-RUN pip install gunicorn
-
-# Copy the rest of your application code into the container
+# Copy the current directory contents into the container at /app
 COPY . .
 
-# Expose the port your app runs on
-EXPOSE 7860
+# Expose port 8000 for the FastAPI app
+EXPOSE 8000
 
-# Command to run your application with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:7860", "app:app"]
+# Run the FastAPI app using Uvicorn
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
