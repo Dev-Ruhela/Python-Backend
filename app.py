@@ -63,7 +63,7 @@ class QuestionRequest(BaseModel):
 async def ask_question(request: QuestionRequest):
     try:
         # Path to the PDF (you can also make this dynamic if needed)
-        pdf_path = '/Users/devruhela/SE_project/pythonBackend/data.pdf'
+        pdf_path = 'data.pdf'
 
         # Get the answer from the model based on the PDF and the question
         answer = get_answer_from_pdf(pdf_path, request.question)
