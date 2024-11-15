@@ -11,7 +11,7 @@ app = FastAPI()
 # Enable CORS for all origins, especially localhost for your frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://chat-iiita-ultimate-techparent.onrender.com"],  # You can restrict it to only your frontend origin, e.g., ['http://localhost:5173']
+    allow_origins=["*"],  # You can restrict it to only your frontend origin, e.g., ['http://localhost:5173']
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
