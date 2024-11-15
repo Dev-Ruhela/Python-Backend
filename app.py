@@ -31,7 +31,7 @@ def get_answer_from_pdf(pdf_path, question):
     pdf_content = extract_text_from_pdf(pdf_path)
     
     # Prepare the context for the Groq model (PDF content + user question)
-    context = f"Here is some content from the PDF:\n{pdf_content}\n\nThe user asks: {question}\nPlease answer based on the provided content."
+    context = f"Here is some content from the PDF:\n{pdf_content}\n\nThe user asks: {question}\nPlease answer strictly based on the provided content."
     
     # Your Groq client
     client = Groq()
@@ -63,7 +63,7 @@ class QuestionRequest(BaseModel):
 async def ask_question(request: QuestionRequest):
     try:
         # Path to the PDF (you can also make this dynamic if needed)
-        pdf_path = 'data.pdf'
+        pdf_path = 'Data_1.pdf'
 
         # Get the answer from the model based on the PDF and the question
         answer = get_answer_from_pdf(pdf_path, request.question)
